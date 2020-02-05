@@ -1,5 +1,7 @@
 package yusheng;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jdom.Document;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
@@ -11,6 +13,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.testng.Assert.*;
 
@@ -73,10 +77,26 @@ public class JaXmlBeanUtilTest {
         Document doc = (new SAXBuilder()).build(in);
         xmlout.output(doc, bo);
         System.out.println(bo.toString());
+
+
+        Map<String,Object> tMap=new HashMap<String,Object>();
+        tMap.put("out", "内容");
+        tMap.put("result", "0");
+        tMap.put("message", "OK");
+        tMap.put("out", xmlStr);
+        ObjectMapper objectMapper = new ObjectMapper();
+        //ObjectMapper(org.codehaus.jackson.map.SerializationConfig.Feature.INDENT_OUTPUT);
+        //objectMapper.
+        String errorResultJson="{\"result\":\"%s\",\"message\":\"%s\",\"out\":[{}]}";
+        //0:正常  1：json格式生成失败  2：IO异常 3:查询无结果
+
+        String   out=objectMapper.writeValueAsString(tMap);
+        System.out.println(out);
+
     }
 
     @org.testng.annotations.Test
-    public void testParseXmlToBean() {
+    public void testParseXmlToBean() throws JsonProcessingException {
         StringBuilder sb = new StringBuilder();
         sb.append("<root>");
         sb.append("<name>wangkecheng</name>");
@@ -85,6 +105,8 @@ public class JaXmlBeanUtilTest {
         sb.append("</root>");
 
         JaBeanToXml jaBeanToXml = (JaBeanToXml) JaXmlBeanUtil.parseXmlToBean(JaBeanToXml.class,sb.toString());
-        System.out.println(jaBeanToXml.toString());
+
+
+        //System.out.println(jaBeanToXml.toString());
     }
 }
